@@ -1,8 +1,7 @@
 """Data model for go-bike-go.
 
 V1: Two tables: User and Station. 
-
-Note: Station primary_key is an ID provided directly from citibike
+    Note: Station primary_key is an ID provided directly from citibike
 
 Class names are singular - table names are plural"""
 
@@ -45,6 +44,46 @@ class Station(db.Model):
 
     def __repr__(self):
         return '<Station id:{id}>'.format(id=self.id)
+
+################################################################################
+
+# What the data from the API looks like:
+# {"station_id":"79","name":"Franklin St & W Broadway","short_name":"5430.08","lat":40.71911552,"lon":-74.00666661,"region_id":71,"rental_methods":["KEY","CREDITCARD"],"capacity":33,"eightd_has_key_dispenser":false},
+# {"station_id":"82","name":"St James Pl & Pearl St","short_name":"5167.06","lat":40.71117416,"lon":-74.00016545,"region_id":71,"rental_methods":["KEY","CREDITCARD"],"capacity":27,"eightd_has_key_dispenser":false},
+
+def example_data():
+    # wkt_spot1 = "POINT(-81.40 38.08)"
+    # spot1 = Spot(name="Gas Station", height=240.8, geom=WKTSpatialElement(wkt_spot1))
+    # wkt_spot2 = "POINT(-81.42 37.65)"
+    # spot2 = Spot(name="Restaurant", height=233.6, geom=WKTSpatialElement(wkt_spot2))
+
+################################################################################    
+
+def init_app():
+    """Creating Flask app in order to run SQLAlchemy"""
+
+    from flask import Flask
+    app = Flask(__name__)
+
+    # this file connects to a test db
+    connect_to_db(app, 'postgres:///bike_test')
+    print "Connected to DB."
+
+
+def connect_to_db(app, database_URI):
+    """Connect the database to Flask app."""
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_URI
+    app.config['SQLALCHEMY_ECHO'] = False
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    db.app = app
+    db.init_app(app)
+
+if __name__ == '__main__':
+
+        init_app()
+        db.create_all()
+
 
 
 
