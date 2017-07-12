@@ -18,15 +18,21 @@ app.jinja_env.undefined = StrictUndefined
 
 @app.route('/')
 def index():
-    """Show homepage."""
+    """Show main map view."""
 
-    return render_template("test.html")
+    return render_template('map_view.html')
 
-@app.route('/hi')
+@app.route('/login')
 def test():
-	"""Test showing a map"""
+	"""Render Login Form"""
 
-	return render_template('map_view.html')
+	return render_template('login.html')
+
+@app.route('/register')
+def register():
+	"""Render the registration form"""
+
+	return render_template('register.html')
 
 
 #---------------------------------------------------------------------#
