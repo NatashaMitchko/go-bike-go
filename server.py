@@ -4,6 +4,7 @@
 # home, work = db.session.query(User.home, User.work).filter_by(User.id==user_id)
 # 
 # main map view, login/register, touch id for login
+
 from jinja2 import StrictUndefined
 from flask import Flask, render_template, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
@@ -38,8 +39,15 @@ def register():
 @app.route('/test')
 def test_api():
 	"""see if get_info functions work"""
-	seed_station_information()
+	# seed_station_information() <<< this works now
 	return '<h1>Hi</h1>'
+
+def get_closest_stations(locaton):
+	"""Given a location (home, work, or the user location), return the top 5
+	closest stations to that point"""
+
+	pass
+
 
 
 
