@@ -25,7 +25,7 @@ JSON Information about the stations is obtained from these links
  ]
 
 
-Saving here for now so I don't forget 
+Saving here for now so I don't forget g
 118/1: home = POINT(40.720807 -73.987864)
 118/2: home = "POINT(40.720807 -73.987864)"
 118/3: query = db.Session.query(Station).order_by(Station.geom.distance_box(home)).limit(2)

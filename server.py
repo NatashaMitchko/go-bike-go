@@ -11,6 +11,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 
 from model import connect_to_db, db, User, Station
 from get_info import seed_station_information, station_status, system_alerts
+from geoalchemy2 import func
 
 app = Flask(__name__)
 app.secret_key = "ursusmaritimus"
@@ -40,15 +41,20 @@ def register():
 def test_api():
 	"""see if get_info functions work"""
 	# seed_station_information() <<< this works now
-	return '<h1>Hi</h1>'
+	point = 'POINT(-73.9713871479 40.7511838746)'
+	stations = get_closest_stations(point)
+	print stations
+	for s in stations:
+		print s.name
+	return render_template('test.html', stations=stations)
 
-def get_closest_stations(locaton):
+def get_closest_stations(location):
 	"""Given a location (home, work, or the user location), return the top 5
 	closest stations to that point"""
 
-	pass
-
-
+	query = db.session.query(Station).order_by(func.ST_Distance(Station.point, 
+			location)).limit(5)
+	return query.all()
 
 
 #---------------------------------------------------------------------#
