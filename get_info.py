@@ -26,10 +26,14 @@ JSON Information about the stations is obtained from these links
       """
 
 import requests, json
+from model import db, Station
+from sqlalchemy import exc
 
-def station_information():
+def seed_station_information():
 	"""Get's and formats all station information in order to update stations in
-	the database. 
+	the database.
+
+		point formatting is: 'POINT(lon lat)'
 
 		https://gbfs.citibikenyc.com/gbfs/en/station_information.json"""
 
@@ -37,7 +41,20 @@ def station_information():
 	response = json.loads(response.text)
 
 	for station in response['data']['stations']:
-		print station['station_id']
+		point = 'POINT(' + str(station['lon']) + ' ' + str(station['lat']) + ')'
+
+		print point
+		new_station = Station(
+							id = int(station['station_id']),
+							name = station['name'],
+							point = point
+								)
+		try:
+			db.session.add(new_station)
+			db.session.commit()
+		except exc.IntegrityError:
+			db.session.rollback()
+
 
 def station_status(station_id):
 	"""Parses out status for a particular station.

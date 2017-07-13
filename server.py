@@ -9,7 +9,7 @@ from flask import Flask, render_template, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 
 from model import connect_to_db, db, User, Station
-from get_info import station_information, station_status, system_alerts
+from get_info import seed_station_information, station_status, system_alerts
 
 app = Flask(__name__)
 app.secret_key = "ursusmaritimus"
@@ -38,7 +38,7 @@ def register():
 @app.route('/test')
 def test_api():
 	"""see if get_info functions work"""
-	station_information()
+	seed_station_information()
 	return '<h1>Hi</h1>'
 
 
