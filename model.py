@@ -19,9 +19,9 @@ class User(db.Model):
                    nullable=False,
                    autoincrement=True,
                    primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
+    username = db.Column(db.String(50), nullable=False, unique=True)
     password = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(50), nullable=False, unique=True)
     home = db.Column(Geography(geometry_type='POINT', srid=4326))
     work = db.Column(Geography(geometry_type='POINT', srid=4326))
 
