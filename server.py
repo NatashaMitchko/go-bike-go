@@ -4,7 +4,7 @@
 from jinja2 import StrictUndefined
 from flask import Flask, render_template, jsonify, request, redirect, flash
 from flask_debugtoolbar import DebugToolbarExtension
-from flask.ext.bcrypt import Bcrypt
+import bcrypt
 from geoalchemy2 import func
 
 from model import connect_to_db, db, User, Station
@@ -13,7 +13,6 @@ from get_info import seed_station_information, station_status, system_alerts
 app = Flask(__name__)
 app.secret_key = "ursusmaritimus"
 app.jinja_env.undefined = StrictUndefined
-bcrypt = Bcrypt(app)
 
 
 #---------------------------------------------------------------------#
@@ -31,7 +30,7 @@ def login_attempt_sucessful(username, password):
 	and have entered the correct password else the function returns false.
 	"""
 	user = get_user_by_username(username)
-	if user and bcrypt.check_password_hash(user.password, password):
+	if user and bcrypt.hashpw(password, hashed) == hashed:
 		return user
 	else:
 		return False 
@@ -82,11 +81,16 @@ def login():
     		return redirect('/login')
 
 
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 def register():
-	"""Render the registration form"""
+	"""Render the registration form and handle regestration events. """
+	if request.method == 'GET':
+		return render_template('register.html')
+	else:
+		username = request.form.get('username')
+    	password = request.form.get('password')
 
-	return render_template('register.html')
+    	# Handle getting home and work points
 
 @app.route('/test')
 def test_stuff_here():
