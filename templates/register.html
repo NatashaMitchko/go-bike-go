@@ -1,97 +1,57 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Place Autocomplete Address Form</title>
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+{% block meta %}
     <meta charset="utf-8">
-    <style>
-      /* Always set the map height explicitly to define the size of the div
-       * element that contains the map. */
-      #map {
-        height: 100%;
-      }
-      /* Optional: Makes the sample page fill the window. */
-      html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-    </style>
-    <link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
-    <style>
-      #locationField, #controls {
-        position: relative;
-        width: 480px;
-      }
-      #autocomplete {
-        width: 99%;
-      }
-      .label {
-        text-align: right;
-        font-weight: bold;
-        width: 100px;
-        color: #303030;
-      }
-      #address {
-        border: 1px solid #000090;
-        background-color: #f0f0ff;
-        width: 480px;
-        padding-right: 2px;
-      }
-      #address td {
-        font-size: 10pt;
-      }
-      .field {
-        width: 99%;
-      }
-      .slimField {
-        width: 80px;
-      }
-      .wideField {
-        width: 200px;
-      }
-      #locationField {
-        height: 20px;
-        margin-bottom: 2px;
-      }
-    </style>
-  </head>
-
-  <body>
-    <div id="locationField">
-      <form action="/register" method="POST">
-      <fieldset>
-        <input type="text" id="username" name="username">
-        <label for="username">Username</label>
-      </fieldset>
-      <fieldset>
-        <input type="password" id="password" name="password">
-        <label for="Password">Password</label>
-      </fieldset>
-      <fieldset>
-        <input id="autocompleteHome" onFocus="geolocate()" type="text"></input>
-        <label for="autocompleteHome">Enter your home address</label>
-      </fieldset>
-      <fieldset>
-        <input id="autocompleteWork"
-          onFocus="geolocate()" type="text"></input>
-        <label for="autocompleteWork">Enter your work address</label>
-      </fieldset>
-      <input type="text" id="home" name="homeLatLng">
-      <input type="text" id="work" name="workLatLng">
-      <input type="submit" name="Submit">
-      </form>
+{% endblock %}
+{% block body %}
+    <div class="container-fluid solid">
+      <div class="row">
+        <div class="col-xs-10 col-xs-offset-1 text-center centered">
+          <h1 id="logo-text">Go Bike Go</h1>
+          <span class="flashed-messages">
+            {% for message in get_flashed_messages() %}
+              {{ message }}
+            {% endfor %}
+          </span>
+          <form action="/register" name="register" method="POST">
+            <fieldset>
+              <input type="text" id="username" name="username" required>
+              <label for="username">Username</label>
+            </fieldset>
+            <fieldset>
+              <input type="password" id="password" name="password" required>
+              <label for="Password">Password</label>
+            </fieldset>
+            <fieldset>
+              <input id="autocompleteHome" placeholder=""
+                onFocus="geolocate()" type="text" required></input>
+              <label for="autocompleteHome">Enter your home address</label>
+            </fieldset>
+            <fieldset>
+              <input id="autocompleteWork" placeholder="" 
+                onFocus="geolocate()" type="text" required></input>
+              <label for="autocompleteWork">Enter your work address</label>
+            </fieldset>
+            <input type="text" id="home" name="homeLatLng" hidden>
+            <input type="text" id="work" name="workLatLng" hidden>
+            <input type="submit" name="Submit">
+          </form>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-4 col-xs-offset-4">
+          <p class="text-center login-form">Already have an account? <b><a href="/login">Log In</a></b></p>
+        </div>
     </div>
+  </div>
+
 
     <script>
-      // This example displays an address form, using the autocomplete feature
-      // of the Google Places API to help users fill in the information.
+      // Get lat/lng using the autocomplete feature
+      // of the Google Places API to register users.
+      // Coordinates are sent in the form "Lng Lat" in order to comply with db constraints.
 
-      // This example requires the Places library. Include the libraries=places
-      // parameter when you first load the API. For example:
-      // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
-
-      var placeSearch, autocompleteHome, autocompleteWork;
+      var autocompleteHome, autocompleteWork;
 
       function initAutocomplete() {
         // Create the autocomplete object, restricting the search to geographical
@@ -145,39 +105,4 @@
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD5BOHJtA9GKwGPHxQiqaBYK6LjmmY-SMI&libraries=places&callback=initAutocomplete"
         async defer></script>
-  </body>
-</html>
-
-
-
-<!-- {% block title %}Register{% endblock %}
-{% block body %}
-<form>
-  <input id="searchTextField" type="text" size="50" placeholder="Enter a location" autocomplete="on" runat="server" />  
-  <input type="hidden" id="city2" name="city2" />
-  <input type="hidden" id="cityLat" name="cityLat" />
-  <input type="hidden" id="cityLng" name="cityLng" /> 
-</form>
-
-<script type="text/javascript">
-    function initialize() {
-        var input = document.getElementById('searchTextField');
-        var autocomplete = new google.maps.places.Autocomplete(input);
-        google.maps.event.addListener(autocomplete, 'place_changed', function () {
-            var place = autocomplete.getPlace();
-            document.getElementById('city2').value = place.name;
-            console.log(place.geometry.location.lat(), place.geometry.location.lat());
-            document.getElementById('cityLat').value = place.geometry.location.lat();
-            document.getElementById('cityLng').value = place.geometry.location.lng();
-            //alert("This function is working!");
-            //alert(place.name);
-           // alert(place.address_components[0].long_name);
-
-        });
-    }
-    google.maps.event.addDomListener(window, 'load', initialize); 
-</script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD5BOHJtA9GKwGPHxQiqaBYK6LjmmY-SMI&libraries=places&callback=initMap"
-        async defer></script>
 {% endblock %}
- -->
