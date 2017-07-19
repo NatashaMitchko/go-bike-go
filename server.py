@@ -59,7 +59,7 @@ def before_request():
 def index():
     """Show main map view. """
 
-    return render_template('map_view.html')
+    return render_template('index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

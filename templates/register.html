@@ -24,9 +24,6 @@
         width: 480px;
       }
       #autocomplete {
-        position: absolute;
-        top: 0px;
-        left: 0px;
         width: 99%;
       }
       .label {
@@ -62,41 +59,29 @@
 
   <body>
     <div id="locationField">
-      <input id="autocomplete" placeholder="Enter your address"
-             onFocus="geolocate()" type="text"></input>
+      <form action="/register" method="POST">
+      <fieldset>
+        <input type="text" id="username" name="username">
+        <label for="username">Username</label>
+      </fieldset>
+      <fieldset>
+        <input type="password" id="password" name="password">
+        <label for="Password">Password</label>
+      </fieldset>
+      <fieldset>
+        <input id="autocompleteHome" onFocus="geolocate()" type="text"></input>
+        <label for="autocompleteHome">Enter your home address</label>
+      </fieldset>
+      <fieldset>
+        <input id="autocompleteWork"
+          onFocus="geolocate()" type="text"></input>
+        <label for="autocompleteWork">Enter your work address</label>
+      </fieldset>
+      <input type="text" id="home" name="homeLatLng">
+      <input type="text" id="work" name="workLatLng">
+      <input type="submit" name="Submit">
+      </form>
     </div>
-
-    <table id="address">
-      <tr>
-        <td class="label">Street address</td>
-        <td class="slimField"><input class="field" id="street_number"
-              disabled="true"></input></td>
-        <td class="wideField" colspan="2"><input class="field" id="route"
-              disabled="true"></input></td>
-      </tr>
-      <tr>
-        <td class="label">City</td>
-        <!-- Note: Selection of address components in this example is typical.
-             You may need to adjust it for the locations relevant to your app. See
-             https://developers.google.com/maps/documentation/javascript/examples/places-autocomplete-addressform
-        -->
-        <td class="wideField" colspan="3"><input class="field" id="locality"
-              disabled="true"></input></td>
-      </tr>
-      <tr>
-        <td class="label">State</td>
-        <td class="slimField"><input class="field"
-              id="administrative_area_level_1" disabled="true"></input></td>
-        <td class="label">Zip code</td>
-        <td class="wideField"><input class="field" id="postal_code"
-              disabled="true"></input></td>
-      </tr>
-      <tr>
-        <td class="label">Country</td>
-        <td class="wideField" colspan="3"><input class="field"
-              id="country" disabled="true"></input></td>
-      </tr>
-    </table>
 
     <script>
       // This example displays an address form, using the autocomplete feature
@@ -106,46 +91,38 @@
       // parameter when you first load the API. For example:
       // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
 
-      var placeSearch, autocomplete;
-      var componentForm = {
-        street_number: 'short_name',
-        route: 'long_name',
-        locality: 'long_name',
-        administrative_area_level_1: 'short_name',
-        country: 'long_name',
-        postal_code: 'short_name'
-      };
+      var placeSearch, autocompleteHome, autocompleteWork;
 
       function initAutocomplete() {
         // Create the autocomplete object, restricting the search to geographical
         // location types.
-        autocomplete = new google.maps.places.Autocomplete(
-            /** @type {!HTMLInputElement} */(document.getElementById('autocomplete')),
+        autocompleteHome = new google.maps.places.Autocomplete(
+            /** @type {!HTMLInputElement} */(document.getElementById('autocompleteHome')),
+            {types: ['geocode']});
+        autocompleteWork = new google.maps.places.Autocomplete(
+            /** @type {!HTMLInputElement} */(document.getElementById('autocompleteWork')),
             {types: ['geocode']});
 
-        // When the user selects an address from the dropdown, populate the address
-        // fields in the form.
-        autocomplete.addListener('place_changed', fillInAddress);
+        // When the user selects an address from the dropdown, populate the lat/lng in
+        // the hidden input field.
+        autocompleteHome.addListener('place_changed', fillInLatLngHome);
+        autocompleteWork.addListener('place_changed', fillInLatLngWork);
       }
 
-      function fillInAddress() {
-        // Get the place details from the autocomplete object.
-        var place = autocomplete.getPlace();
+      function fillInLatLngHome(){
+        // Get the lat/lng details from the autocomplete object.
+        var place = autocompleteHome.getPlace();
+        console.log(place.geometry.location.lat(), place.geometry.location.lng());
+        var coordinates = String(place.geometry.location.lng()) + ' ' + String(place.geometry.location.lat())
+        document.getElementById('home').value = coordinates;
+      }
 
-        for (var component in componentForm) {
-          document.getElementById(component).value = '';
-          document.getElementById(component).disabled = false;
-        }
-
-        // Get each component of the address from the place details
-        // and fill the corresponding field on the form.
-        for (var i = 0; i < place.address_components.length; i++) {
-          var addressType = place.address_components[i].types[0];
-          if (componentForm[addressType]) {
-            var val = place.address_components[i][componentForm[addressType]];
-            document.getElementById(addressType).value = val;
-          }
-        }
+      function fillInLatLngWork(){
+        // Get the lat/lng details from the autocomplete object.
+        var place = autocompleteWork.getPlace();
+        console.log(place.geometry.location.lat(), place.geometry.location.lng());
+        var coordinates = String(place.geometry.location.lng()) + ' ' + String(place.geometry.location.lat())
+        document.getElementById('work').value = coordinates;
       }
 
       // Bias the autocomplete object to the user's geographical location,
