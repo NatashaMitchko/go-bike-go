@@ -24,23 +24,23 @@
             </fieldset>
             <fieldset>
               <input id="autocompleteHome" placeholder=""
-                onFocus="geolocate()" type="text" required></input>
+                onFocus="geolocate()" type="text" name="home" required></input>
               <label for="autocompleteHome">Enter your home address</label>
             </fieldset>
             <fieldset>
               <input id="autocompleteWork" placeholder="" 
-                onFocus="geolocate()" type="text" required></input>
+                onFocus="geolocate()" type="text" name="work" required></input>
               <label for="autocompleteWork">Enter your work address</label>
             </fieldset>
-            <input type="text" id="home" name="homeLatLng" hidden>
-            <input type="text" id="work" name="workLatLng" hidden>
+            <input type="text" id="home" name="homeLngLat" hidden>
+            <input type="text" id="work" name="workLngLat" hidden>
             <input type="submit" name="Submit">
           </form>
         </div>
       </div>
       <div class="row">
         <div class="col-xs-4 col-xs-offset-4">
-          <p class="text-center login-form">Already have an account? <b><a href="/login">Log In</a></b></p>
+          <p class="text-center goto-login-form">Already have an account? <b><a href="/login">Log In</a></b></p>
         </div>
     </div>
   </div>

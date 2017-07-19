@@ -89,7 +89,20 @@ def register():
 	else:
 		username = request.form.get('username')
     	password = request.form.get('password')
+    	home_address = request.form.get('home')
+    	work_address = request.form.get('work')
+    	home_lng_lat = request.form.get('homeLngLat')
+    	work_lng_lat = request.form.get('workLngLat')
 
+    	if get_user_by_username(username):
+    		flash('Username Taken')
+    		return redirect('/register')
+    	else:
+    		home = 'POINT(' + home_lng_lat + ')'
+    		work = 'POINT(' + work_lng_lat + ')'
+
+    		create_new_user()
+    		
     	# Handle getting home and work points
 
 @app.route('/test')
