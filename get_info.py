@@ -24,28 +24,6 @@ JSON Information about the stations is obtained from these links
     }
  ]
 
-
-Saving here for now so I don't forget g
-118/1: home = POINT(40.720807 -73.987864)
-118/2: home = "POINT(40.720807 -73.987864)"
-118/3: query = db.Session.query(Station).order_by(Station.geom.distance_box(home)).limit(2)
-118/4: Station.order_by(Station.geom.distance_box(home)).limit(5)
-118/5: User.query.all()
-118/6: Station.query.all()
-119/1: db.session.query(Station).order_by(Station.geom.distance_box(home)).limit(5)
-119/2: db.session.query(Station).order_by(Station.point.distance_box(home)).limit(5)
-119/3: home = "POINT(40.720807 -73.987864)"
-119/4: db.session.query(Station).order_by(Station.point.distance_box(home)).limit(5)
-119/5: a = db.session.query(Station).order_by(Station.point.distance_box(home)).limit(5)
-119/6: a.all()
-120/1: home = "POINT(40.720807 -73.987864)"
-120/2: a = db.session.query(Station).limit(2).order_by(func.ST_Distance(Station.point, home))
-120/3: a = db.session.query(Station).order_by(func.ST_Distance(Station.point, home)).limit(2)
-120/4: a
-120/5: a.all()
-120/6: a = db.session.query(Station).order_by(func.ST_Distance(Station.point, home)).limit(3)
-120/7: a.all()
-
       """
 
 import requests, json
@@ -74,8 +52,7 @@ def seed_station_information():
 							name = station['name'],
 							point = point,
 							num_bikes_available=0, 
-							num_docks_available=0
-								)
+							num_docks_available=0)
 		try:
 			db.session.add(new_station)
 			db.session.commit()

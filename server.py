@@ -6,6 +6,7 @@ from flask import Flask, render_template, jsonify, request, redirect, flash
 from flask_debugtoolbar import DebugToolbarExtension
 import bcrypt
 from geoalchemy2 import func
+from sqlalchemy import exc
 
 from model import connect_to_db, db, User, Station
 from get_info import seed_station_information, update_station_status, system_alerts
@@ -18,6 +19,26 @@ app.jinja_env.undefined = StrictUndefined
 #---------------------------------------------------------------------#
 # Helper Functions
 #---------------------------------------------------------------------#
+
+def create_new_user(user_info):
+	"""This function takes the request.form objcet passed to the register route and
+	parses it out to create a new user in the database."""
+
+	home = 'POINT(' + user_info['homeLngLat'] + ')'
+	work = 'POINT(' + user_info['workLngLat'] + ')'
+
+	new_user = User(username = user_info['username'],
+					password = bcrypt.hashpw(user_info['password'].encode('utf-8'), bcrypt.gensalt()),
+					home_address = user_info['home'],
+					work_address = user_info['work'],
+					home_point = home,
+					work_point = work)
+	try:
+		db.session.add(new_user)
+		db.session.commit()
+	except exc.IntegrityError:
+		db.session.rollback()
+
 
 def get_user_by_username(username):
     """Takes username and returns user object, else returns None """
@@ -88,22 +109,15 @@ def register():
 		return render_template('register.html')
 	else:
 		username = request.form.get('username')
-    	password = request.form.get('password')
-    	home_address = request.form.get('home')
-    	work_address = request.form.get('work')
-    	home_lng_lat = request.form.get('homeLngLat')
-    	work_lng_lat = request.form.get('workLngLat')
-
+		print request.form
     	if get_user_by_username(username):
     		flash('Username Taken')
     		return redirect('/register')
     	else:
-    		home = 'POINT(' + home_lng_lat + ')'
-    		work = 'POINT(' + work_lng_lat + ')'
-
-    		create_new_user()
+    		create_new_user(request.form)
+    		print "new user created"
+    		return redirect('/')
     		
-    	# Handle getting home and work points
 
 @app.route('/test')
 def test_stuff_here():
@@ -114,9 +128,6 @@ def test_stuff_here():
 	print "updated status"
 	point = 'POINT(-73.9713871479 40.7511838746)'
 	stations = get_closest_stations(point)
-	print stations
-	for s in stations:
-		print s.name
 	return render_template('test.html', stations=stations)
 
 
