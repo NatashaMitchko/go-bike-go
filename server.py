@@ -8,7 +8,7 @@ import bcrypt
 from geoalchemy2 import func
 
 from model import connect_to_db, db, User, Station
-from get_info import seed_station_information, station_status, system_alerts
+from get_info import seed_station_information, update_station_status, system_alerts
 
 app = Flask(__name__)
 app.secret_key = "ursusmaritimus"
@@ -108,7 +108,10 @@ def register():
 @app.route('/test')
 def test_stuff_here():
 	"""see if get_info functions work"""
-	# seed_station_information() <<< this works now
+	# seed_station_information()
+	print "added stations"
+	update_station_status()
+	print "updated status"
 	point = 'POINT(-73.9713871479 40.7511838746)'
 	stations = get_closest_stations(point)
 	print stations

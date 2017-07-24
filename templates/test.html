@@ -6,7 +6,7 @@
 <body>
 <ol>
 {% for s in stations %}
-	<li>{{ s.name }}</li>
+	<li>{{ s.name }} {{ s.num_bikes_available }} {{ s.num_docks_available }}</li>
 {% endfor %}
 </ol>
 </body>

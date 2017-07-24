@@ -58,9 +58,12 @@ def example_data():
     spot1 = "POINT(40.71911552 -74.00666661)"
     spot2 = "POINT(40.71117416 -74.00016545)"
     spot3 = "POINT(40.73172428 -74.00674436)"
-    station1 = Station(id=79, name="Franklin St & W Broadway", point=spot1)
-    station2 = Station(id=82, name="St James Pl & Pearl St", point=spot2)
-    station3 = Station(id=127, name="Barrow St & Hudson St", point=spot3)
+    station1 = Station(id=79, name="Franklin St & W Broadway", point=spot1,
+        num_bikes_available=0, num_docks_available=0)
+    station2 = Station(id=82, name="St James Pl & Pearl St", point=spot2,
+        num_bikes_available=0, num_docks_available=0)
+    station3 = Station(id=127, name="Barrow St & Hudson St", point=spot3,
+        num_bikes_available=0, num_docks_available=0)
 
     db.session.add_all([station1, station2, station3])
     db.session.commit()

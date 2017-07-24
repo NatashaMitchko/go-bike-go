@@ -58,6 +58,8 @@ def seed_station_information():
 
 		point formatting is: 'POINT(lon lat)'
 
+		Bike and dock information is initialized at zero
+
 		https://gbfs.citibikenyc.com/gbfs/en/station_information.json"""
 
 	response = requests.get('https://gbfs.citibikenyc.com/gbfs/en/station_information.json')
@@ -70,7 +72,9 @@ def seed_station_information():
 		new_station = Station(
 							id = int(station['station_id']),
 							name = station['name'],
-							point = point
+							point = point,
+							num_bikes_available=0, 
+							num_docks_available=0
 								)
 		try:
 			db.session.add(new_station)
@@ -79,17 +83,23 @@ def seed_station_information():
 			db.session.rollback()
 
 
-def station_status(station_id):
-	"""Parses out status for a particular station and updates the database.
+def update_station_status():
+	"""Updates the database with the status of all of the stations.
 			
-		https://gbfs.citibikenyc.com/gbfs/en/station_status.json"""
+	https://gbfs.citibikenyc.com/gbfs/en/station_status.json"""
 
-		response = requests.get(https://gbfs.citibikenyc.com/gbfs/en/station_status.json)
-		response = json.loads(response.text)
+	response = requests.get('https://gbfs.citibikenyc.com/gbfs/en/station_status.json')
+	response = json.loads(response.text)
 
-		for station in response['data']['stations']:
-			Station.update().where(Station.id==station['station_id']).values(num_bikes_available==station['num_bikes_available'],
-				num_docks_available==station['num_docks_available'])
+	for station in response['data']['stations']:
+		try:
+			s = db.session.query(Station).filter(Station.id == station['station_id'])
+
+			s.update({Station.num_bikes_available: station['num_bikes_available'],
+									Station.num_docks_available: station['num_docks_available']})
+			db.session.commit()
+		except exc.IntegrityError:
+			db.session.rollback()
 
 def system_alerts():
 	"""Get alerts about the system. 
