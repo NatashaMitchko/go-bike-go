@@ -21,9 +21,10 @@ class User(db.Model):
                    primary_key=True)
     username = db.Column(db.String(50), nullable=False, unique=True)
     password = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(50), nullable=False, unique=True)
-    home = db.Column(Geography(geometry_type='POINT', srid=4326))
-    work = db.Column(Geography(geometry_type='POINT', srid=4326))
+    home_address = db.Column(db.String(150), nullable=False)
+    work_address = db.Column(db.String(150), nullable=False)
+    home_point = db.Column(Geography(geometry_type='POINT', srid=4326))
+    work_point = db.Column(Geography(geometry_type='POINT', srid=4326))
 
     def __repr__(self):
         return '<User id:{id} username:{username}>'.format(username=self.username,
