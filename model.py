@@ -32,7 +32,7 @@ class User(db.Model):
 
 
 class Station(db.Model):
-    """Stores information about all available bike stations. Does not store bike
+    """Stores information about all available bike stations. Stores bike
                 availability information"""
 
     __tablename__ = 'stations'
@@ -43,17 +43,14 @@ class Station(db.Model):
                    primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     point = db.Column(Geography(geometry_type='POINT', srid=4326))
+    num_bikes_available = db.Column(db.Integer, nullable=False)
+    num_docks_available = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):
-        return '<Station id:{id}>'.format(id=self.id)
+        return '<Station id:{id}, Bike:Dock {bike}:{dock}>'.format(id=self.id, 
+            bike=self.num_bikes_available, dock=self.num_docks_available)
 
 ##########################################################################
-
-# What the data from the API looks like:
-# {"station_id":"79","name":"Franklin St & W Broadway","short_name":"5430.08","lat":40.71911552,"lon":-74.00666661,"region_id":71,"rental_methods":["KEY","CREDITCARD"],"capacity":33,"eightd_has_key_dispenser":false},
-# {"station_id":"82","name":"St James Pl & Pearl St","short_name":"5167.06","lat":40.71117416,"lon":-74.00016545,"region_id":71,"rental_methods":["KEY","CREDITCARD"],"capacity":27,"eightd_has_key_dispenser":false},
-# {"station_id":"127","name":"Barrow St & Hudson St","short_name":"5805.05","lat":40.73172428,"lon":-74.00674436,"region_id":71,"rental_methods":["KEY","CREDITCARD"],"capacity":31,"eightd_has_key_dispenser":false}
-
 
 def example_data():
     """Add some example stations and a user to the db"""

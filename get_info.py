@@ -80,11 +80,16 @@ def seed_station_information():
 
 
 def station_status(station_id):
-	"""Parses out status for a particular station.
+	"""Parses out status for a particular station and updates the database.
 			
 		https://gbfs.citibikenyc.com/gbfs/en/station_status.json"""
 
-	pass
+		response = requests.get(https://gbfs.citibikenyc.com/gbfs/en/station_status.json)
+		response = json.loads(response.text)
+
+		for station in response['data']['stations']:
+			Station.update().where(Station.id==station['station_id']).values(num_bikes_available==station['num_bikes_available'],
+				num_docks_available==station['num_docks_available'])
 
 def system_alerts():
 	"""Get alerts about the system. 
