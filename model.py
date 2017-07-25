@@ -42,7 +42,7 @@ class Station(db.Model):
                    autoincrement=False,
                    primary_key=True)
     name = db.Column(db.String(50), nullable=False)
-    point = db.Column(Geography(geometry_type='POINT', srid=4326))
+    point = db.Column(Geography(geometry_type='POINT', srid=4326), nullable=False)
     num_bikes_available = db.Column(db.Integer, nullable=False)
     num_docks_available = db.Column(db.Integer, nullable=False)
 
@@ -78,7 +78,7 @@ def init_app():
     app = Flask(__name__)
 
     # this file connects to a test db
-    connect_to_db(app, 'postgres:///bike_test')
+    connect_to_db(app, 'postgres:///bike')
     print "Connected to DB."
 
 

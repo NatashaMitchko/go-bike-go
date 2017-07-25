@@ -122,7 +122,7 @@ def register():
 @app.route('/test')
 def test_stuff_here():
 	"""see if get_info functions work"""
-	# seed_station_information()
+	seed_station_information()
 	print "added stations"
 	update_station_status()
 	print "updated status"
@@ -137,7 +137,7 @@ def test_stuff_here():
 
 if __name__ == "__main__":
     app.debug = True
-    connect_to_db(app, 'postgres:///bike_test')
+    connect_to_db(app, 'postgres:///bike')
     # DebugToolbarExtension(app)
     app.config['TEMPLATES_AUTO_RELOAD'] = True
 
