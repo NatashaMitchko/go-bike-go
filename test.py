@@ -1,7 +1,7 @@
 import unittest
 
 from server import app
-from model import connect_to_db, db
+from model import connect_to_db, db, Station, User, example_data
 
 import server
 import get_info
@@ -11,20 +11,33 @@ class TestHelperFunctions(unittest.TestCase):
 	with the database"""
 
 class TestHelperFunctionsDB_Read(unittest.TestCase):
-	"""Tests helper functions that read from the database
+	"""Tests helper functions that read from the database.
+	Database for these tests is seeded with example_data()
 	get_user_by_username()
 	get_closest_stations()"""
+
+	def setUp(self):
+		self.client = app.test_client()
+		app.config['TESTING'] = True
+		connect_to_db(app, 'postgresql:///bike_test')
+		db.create_all()
+		example_data()
+
+	def tearDown(self);
+		db.session.close()
+		db.drop_all()
 
 class TestHelperFunctionsDB_Write(unittest.TestCase):
 	"""Tests helper functions that write to the database
 	create_new_user()
 	seed_station_data()
+	update_station_status()
 	"""
 
 	def setUp(self):
 		self.client = app.test_client()
 		app.config['TESTING'] = True
-		connect_to_db(app, postgresql:///bike_test)
+		connect_to_db(app, 'postgresql:///bike_test')
 		db.create_all()
 
 	def tearDown(self):
@@ -32,15 +45,16 @@ class TestHelperFunctionsDB_Write(unittest.TestCase):
 		db.drop_all()
 
 	def test_create_new_user(self):
-		"""Create new user takes the immutable dict request.from
+		"""Add new user to db, hash pw
+		Create new user takes the immutable dict request.from
 		and creates a new user record."""
 
 		data = {'username': u'Test_User',
 					'password': u'test',
-					'work': u'88 7th Avenue, New York, NY, United States'
+					'work': u'88 7th Avenue, New York, NY, United States',
 					'home': u'152 Lexington Avenue, New York, NY, United States',
-					'homeLngLat', u'-73.98199699999998 40.743772',
-					'workLngLat', u'-74.0014936 40.7396046'}
+					'homeLngLat': u'-73.98199699999998 40.743772',
+					'workLngLat': u'-74.0014936 40.7396046'}
 
 		# Add Test_User to the database
 		server.create_new_user(data)
@@ -48,16 +62,42 @@ class TestHelperFunctionsDB_Write(unittest.TestCase):
 		new_user = db.session.query(User).filter(User.username=='Test_User').one()
 
 		# new_user would return none if it did not exist in the db
-		self.assertTrue(new_user)
+		self.assertTrue(new_user, 'Test_User was not sucessfully added to db.')
 		self.assertNotEqual(new_user.password, 'password', 'Password likely not hashed before stored in db.')
 
 	def test_seed_station_information(self):
-		"""Fetches the station information from the Citibike API
+		"""Seed stations and initialize counts to 0
+		Fetches the station information from the Citibike API
 		and adds stations to the database with bike/dock values of 0"""
 		get_info.seed_station_information()
 
-		MacDougal_Prince = db.session.query(Station).filter(Station.id == 128).one
-		self.assertTrue(MacDougal_Prince)
+		MacDougal_Prince = db.session.query(Station).filter(Station.id == 128).one()
+		self.assertTrue(MacDougal_Prince, 'Station at MacDogual/Pride did not get sucessfully added.')
+
+		self.assertEqual(MacDougal_Prince.num_bikes_available, 0, 'Bike counts were not initialized properly')
+		self.assertEqual(MacDougal_Prince.num_docks_available, 0, 'Dock counts were not initialized properly')
+
+	def test_update_station_status(self):
+		"""Update bike/dock counts in db
+		Fetches station status information from Citibike API
+		and updates the num bikes/docks available in the db"""
+		# Seed the db and initialize all counts to 0
+		get_info.seed_station_information()
+
+		# Save number of bikes/docks before update
+		E40th_5thave = db.session.query(Station).filter(Station.id == 153).one()
+		bikes_before = E40th_5thave.num_bikes_available
+		docks_before = E40th_5thave.num_docks_available
+
+		# Update bike/dock numbers
+		get_info.update_station_status()
+
+		E40th_5thave = db.session.query(Station).filter(Station.id == 153).one()
+		bikes_after = E40th_5thave.num_bikes_available
+		docks_after = E40th_5thave.num_docks_available
+
+		self.assertNotEqual(bikes_before + docks_before, bikes_after + docks_after, 'Bikes did not update, or station is disabled.')
+
 
 
 
@@ -98,11 +138,6 @@ class TestRoutes(unittest.TestCase):
 
 if __name__ == "__main__":
 
-    os.system('dropdb bike_test')
-    os.system('createdb bike_test')
-    os.system('psql bike_test')
-    os.system('CREATE EXTENSION postgis;')
-    os.system('/q')
     unittest.main()
 
 

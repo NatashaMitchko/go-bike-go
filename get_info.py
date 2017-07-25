@@ -46,7 +46,6 @@ def seed_station_information():
 	for station in response['data']['stations']:
 		point = 'POINT(' + str(station['lon']) + ' ' + str(station['lat']) + ')'
 
-		print point
 		new_station = Station(
 							id = int(station['station_id']),
 							name = station['name'],

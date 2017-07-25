@@ -78,7 +78,7 @@ def init_app():
     app = Flask(__name__)
 
     # this file connects to a test db
-    connect_to_db(app, 'postgres:///bike')
+    connect_to_db(app, 'postgres:///bike_test')
     print "Connected to DB."
 
 
