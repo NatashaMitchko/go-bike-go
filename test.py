@@ -27,6 +27,20 @@ class TestHelperFunctionsDB_Read(unittest.TestCase):
 		db.session.close()
 		db.drop_all()
 
+	def test_get_user_by_username(self):
+		"""Retrieve user object from db by username"""
+		username_in_db = server.get_user_by_username('Natasha')
+		self.assertTrue(username_in_db, 'Query did not fetch user object.')
+		username_not_in_db = server.get_user_by_username('xyz')
+		self.assertFalse(username_not_in_db, 'Query fetched user that did not exist (xyz).')
+
+	def test_get_closest_stations(self):
+		"""Get the 5 closest stations to the given point"""
+		point = "POINT(40.71911552 -74.00666661)"
+		stations = set(server.get_closest_stations(point))
+		# find the closest stations, make them a set of objects see if sets intersect completely
+
+
 class TestHelperFunctionsDB_Write(unittest.TestCase):
 	"""Tests helper functions that write to the database
 	create_new_user()
