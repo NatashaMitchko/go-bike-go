@@ -99,12 +99,6 @@ class TestHelperFunctionsDB_Write(unittest.TestCase):
 		self.assertNotEqual(bikes_before + docks_before, bikes_after + docks_after, 'Bikes did not update, or station is disabled.')
 
 
-
-
-
-
-
-
 class TestRoutes(unittest.TestCase):
 	"""End to end testing of all routes """
 
