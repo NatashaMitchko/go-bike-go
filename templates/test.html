@@ -4,10 +4,19 @@
 	<title>Test</title>
 </head>
 <body>
+<h1>Welcome back {{ user.username }}</h1>
+<h2>Home:</h2>
 <ol>
-{% for s in stations %}
+{% for s in home %}
 	<li>{{ s.name }} Bikes: {{ s.num_bikes_available }} Docks: {{ s.num_docks_available }}</li>
 {% endfor %}
 </ol>
+<h2>Work:</h2>
+<ol>
+{% for s in work %}
+	<li>{{ s.name }} Bikes: {{ s.num_bikes_available }} Docks: {{ s.num_docks_available }}</li>
+{% endfor %}
+</ol>
+
 </body>
 </html>

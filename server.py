@@ -2,7 +2,7 @@
 # 
 
 from jinja2 import StrictUndefined
-from flask import Flask, render_template, jsonify, request, redirect, flash
+from flask import Flask, render_template, jsonify, request, redirect, flash, session
 from flask_debugtoolbar import DebugToolbarExtension
 import bcrypt
 from geoalchemy2 import func
@@ -39,11 +39,13 @@ def create_new_user(user_info):
 	except exc.IntegrityError:
 		db.session.rollback()
 
+def get_user_by_id(id):
+	"""Takes user id and returns user object"""
+	return User.query.filter(User.id==id).first()
 
 def get_user_by_username(username):
     """Takes username and returns user object, else returns None """
-    user = User.query.filter(User.username==username).first()
-    return user
+    return User.query.filter(User.username==username).first()
     
 def login_attempt_sucessful(username, password):
 	"""Checks to see if the username/password combination is valid. 
@@ -62,6 +64,9 @@ def get_closest_stations(location):
 
 	query = db.session.query(Station).order_by(func.ST_Distance(Station.point, 
 			location)).limit(5)
+	# Get user readable point
+	# b = db.session.query(func.ST_AsText(Station.point)).first()
+	# Still working out how to get this from the object itself (WKB)
 	return query.all()
 
 
@@ -74,11 +79,19 @@ def get_closest_stations(location):
 def before_request():
     # When you import jinja2 macros, they get cached which is annoying for local
     # development, so wipe the cache every request.
+    session['active'] = True
+    session['user_id'] = 1
     app.jinja_env.cache = {}
 
 @app.route('/')
 def index():
     """Show main map view. """
+    if session['active']:
+    	user = get_user_by_id(session['user_id'])
+    	home = get_closest_stations(user.home_point)
+    	work = get_closest_stations(user.work_point)
+
+    	return render_template('test.html', user=user, home=home, work=work)
 
     return render_template('map_view.html')
 
@@ -116,8 +129,7 @@ def register():
     	else:
     		create_new_user(request.form)
     		print "new user created"
-    		return redirect('/')
-    		
+    		return redirect('/')  		
 
 @app.route('/test')
 def test_stuff_here():
