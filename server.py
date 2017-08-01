@@ -62,11 +62,10 @@ def get_closest_stations(location):
 	"""Given a location (home, work, or the user location), return the top 5
 	closest stations to that point"""
 
-	query = db.session.query(Station).order_by(func.ST_Distance(Station.point, 
-			location)).limit(5)
-	# Get user readable point
-	# b = db.session.query(func.ST_AsText(Station.point)).first()
-	# Still working out how to get this from the object itself (WKB)
+	query = db.session.query(Station, 
+		func.ST_AsText(Station.point)).order_by(func.ST_Distance(Station.point, 
+		location)).limit(5)
+
 	return query.all()
 
 
@@ -150,7 +149,7 @@ def test_stuff_here():
 if __name__ == "__main__":
     app.debug = True
     connect_to_db(app, 'postgres:///bike')
-    # DebugToolbarExtension(app)
+    DebugToolbarExtension(app)
     app.config['TEMPLATES_AUTO_RELOAD'] = True
 
     app.run(port=5000, host="0.0.0.0")

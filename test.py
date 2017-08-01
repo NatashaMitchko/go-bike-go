@@ -35,7 +35,7 @@ class TestHelperFunctionsDB_Read(unittest.TestCase):
 		self.assertFalse(username_not_in_db, 'Query fetched user that did not exist (xyz).')
 
 	def test_get_closest_stations(self):
-		"""Get the 5 closest stations to the given point"""
+		"""Get the 5 closest station opbject to given point and WKT point."""
 		point = "POINT(40.71911552 -74.00666661)"
 		stations = set(server.get_closest_stations(point))
 		# find the closest stations, make them a set of objects see if sets intersect completely

@@ -18,5 +18,27 @@
 {% endfor %}
 </ol>
 
+<div id="map" style="height:500px"></div>
+    <script>
+      var map;
+
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 40.742258, lng: -74.001383},
+          zoom: 12,
+          scrollwheel: false,
+        });
+      var point1 = {lat: 40.742262, lng: -74.0035717};
+
+      var marker = new google.maps.Marker({
+        position: point1,
+        map: map
+      });
+      }
+
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD5BOHJtA9GKwGPHxQiqaBYK6LjmmY-SMI&callback=initMap"
+    async defer></script>
+
 </body>
 </html>

@@ -21,6 +21,7 @@
   </head>
   <body>
   <h1>Hello I am a website</h1>
+  
     <div id="map"></div>
     <script>
       var map;
@@ -30,14 +31,14 @@
           center: {lat: 40.742258, lng: -74.001383},
           zoom: 11
         });
-      }
-
       var point1 = {lat: 40.742262, lng: -74.0035717};
 
       var marker = new google.maps.Marker({
         position: point1,
         map: map
       });
+      }
+
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD5BOHJtA9GKwGPHxQiqaBYK6LjmmY-SMI&callback=initMap"
     async defer></script>
