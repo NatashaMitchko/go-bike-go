@@ -5,6 +5,7 @@ from jinja2 import StrictUndefined
 from flask import Flask, render_template, jsonify, request, redirect, flash, session
 from flask_debugtoolbar import DebugToolbarExtension
 import bcrypt
+import re
 from geoalchemy2 import func
 from sqlalchemy import exc
 
@@ -128,23 +129,45 @@ def register():
     	else:
     		create_new_user(request.form)
     		print "new user created"
-    		return redirect('/')  		
-
-@app.route('/test')
-def test_stuff_here():
-	"""see if get_info functions work"""
-	seed_station_information()
-	print "added stations"
-	update_station_status()
-	print "updated status"
-	point = 'POINT(-73.9713871479 40.7511838746)'
-	stations = get_closest_stations(point)
-	return render_template('test.html', stations=stations)
+    		return redirect('/')
 
 
 #---------------------------------------------------------------------#
 # JSON Routes
 #---------------------------------------------------------------------#
+
+@app.route('/home.JSON')
+def send_home_availability():
+	"""Sends JSON about home bike stations and availability"""
+	user = get_user_by_id(session['user_id'])
+	home = get_closest_stations(user.home_point)
+
+	stations = {}
+
+	for i in range(len(home)):
+		coords = re.match(r'\(-?([^\)]+)\)', '(-74.00016545 40.71117416)').group()
+		lon, lat = coords[1:-1].split()
+		stations['station' + str(i)] = {'name': home[i][0].name,
+										'bikes': home[i][0].num_bikes_available,
+										'docks': home[i][0].num_docks_available,
+										'lat': lat,
+										'lon': lon
+										}
+	return jsonify(stations)
+
+
+
+@app.route('/work.JSON')
+def send_work_availability():
+	"""Sends JSON about work bike stations and availability"""
+	user = get_user_by_id(session['user_id'])
+	home = get_closest_stations(user.work_point)
+
+@app.route('/user-location.JSON')
+def send_user_location_availability(location):
+	"""Gets location from the user and finds closest stations and availability"""
+
+
 
 if __name__ == "__main__":
     app.debug = True

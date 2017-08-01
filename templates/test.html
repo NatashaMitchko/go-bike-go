@@ -1,26 +1,28 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Test</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% block title %}Test{% endblock %}
+{% block body %}
+
 <h1>Welcome back {{ user.username }}</h1>
 <h2>Home:</h2>
 <ol>
 {% for s in home %}
-	<li>{{ s.name }} Bikes: {{ s.num_bikes_available }} Docks: {{ s.num_docks_available }}</li>
+	<li>{{ s[0].name }} Bikes: {{ s[0].num_bikes_available }} Docks: {{ s[0].num_docks_available }}</li>
 {% endfor %}
 </ol>
 <h2>Work:</h2>
 <ol>
 {% for s in work %}
-	<li>{{ s.name }} Bikes: {{ s.num_bikes_available }} Docks: {{ s.num_docks_available }}</li>
+	<li>{{ s[0].name }} Bikes: {{ s[0].num_bikes_available }} Docks: {{ s[0].num_docks_available }}</li>
 {% endfor %}
 </ol>
 
 <div id="map" style="height:500px"></div>
     <script>
       var map;
+
+      $.get('/home.JSON', function(result){
+      	console.log(result);
+      });
 
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
@@ -40,5 +42,4 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD5BOHJtA9GKwGPHxQiqaBYK6LjmmY-SMI&callback=initMap"
     async defer></script>
 
-</body>
-</html>
+{% endblock %}

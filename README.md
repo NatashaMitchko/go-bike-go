@@ -1,6 +1,6 @@
 # Go Bike Go
 
-Inspired by the app [WABA](https://itunes.apple.com/us/app/where-a-bike-at-citibike-nyc/id689093812?mt=8) (where a bike at?), Go Bike Go allows users to quikly find Citibikes on their commute. Users create a profile with their home and work addresses and can easily see bike and dock availability at the endpoints of their commute.
+Inspired by the app [WABA](https://itunes.apple.com/us/app/where-a-bike-at-citibike-nyc/id689093812?mt=8) (where a bike at?), Go Bike Go allows users to quickly find Citibikes on their commute. Users create a profile with their home and work addresses and can easily see bike and dock availability at the endpoints of their commute.
 
 ## Database and ORM
 ### Setting up the database
@@ -46,17 +46,12 @@ from sqlalchemy import exc
 
 point = 'POINT(' + '-73.9588267' + ' ' + '40.7047029' + ')'
 
-		new_station = Station(
-							id = int(station['station_id']),
-							name = station['name'],
-							point = point,
-							num_bikes_available=0, 
-							num_docks_available=0)
-		try:
-			db.session.add(new_station)
-			db.session.commit()
-		except exc.IntegrityError:
-			db.session.rollback()
+new_example = Example(point = point)
+try:
+	db.session.add(new_example)
+	db.session.commit()
+except exc.IntegrityError:
+	db.session.rollback()
 ```
 
 #### Getting information out of the database
