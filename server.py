@@ -63,13 +63,10 @@ def get_closest_stations(location):
 	"""Given a location (home, work, or the user location), return the top 5
 	closest stations to that point"""
 
-	query = db.session.query(Station, 
-		func.ST_AsText(Station.point)).order_by(func.ST_Distance(Station.point, 
+	query = db.session.query(Station).order_by(func.ST_Distance(Station.point, 
 		location)).limit(5)
 
 	return query.all()
-
-
 
 #---------------------------------------------------------------------#
 # Routes
@@ -131,12 +128,22 @@ def register():
     		print "new user created"
     		return redirect('/')
 
+@app.route('/seed')
+def seed_and_update():
+	"""seed and update the database - temporart solution"""
+	seed_station_information()
+	print 'Seeded'
+	update_station_status()
+	print 'Stations updated'
+
+	return '<h1>DB Seeded</h1>'
+
 
 #---------------------------------------------------------------------#
 # JSON Routes
 #---------------------------------------------------------------------#
 
-@app.route('/home.JSON')
+@app.route('/home.json')
 def send_home_availability():
 	"""Sends JSON about home bike stations and availability"""
 	user = get_user_by_id(session['user_id'])
@@ -147,7 +154,7 @@ def send_home_availability():
 	for i in range(len(home)):
 		coords = re.match(r'\(-?([^\)]+)\)', '(-74.00016545 40.71117416)').group()
 		lon, lat = coords[1:-1].split()
-		stations['station' + str(i)] = {'name': home[i][0].name,
+		stations[str(i)] = {'name': home[i][0].name,
 										'bikes': home[i][0].num_bikes_available,
 										'docks': home[i][0].num_docks_available,
 										'lat': lat,
@@ -157,11 +164,24 @@ def send_home_availability():
 
 
 
-@app.route('/work.JSON')
+@app.route('/work.json')
 def send_work_availability():
 	"""Sends JSON about work bike stations and availability"""
 	user = get_user_by_id(session['user_id'])
-	home = get_closest_stations(user.work_point)
+	work = get_closest_stations(user.work_point)
+
+	stations = {}
+
+	for i in range(len(work)):
+		coords = re.match(r'\(-?([^\)]+)\)', '(-74.00016545 40.71117416)').group()
+		lon, lat = coords[1:-1].split()
+		stations[str(i)] = {'name': work[i][0].name,
+										'bikes': work[i][0].num_bikes_available,
+										'docks': work[i][0].num_docks_available,
+										'lat': lat,
+										'lon': lon
+										}
+	return jsonify(stations)
 
 @app.route('/user-location.JSON')
 def send_user_location_availability(location):
@@ -173,6 +193,7 @@ if __name__ == "__main__":
     app.debug = True
     connect_to_db(app, 'postgres:///bike')
     DebugToolbarExtension(app)
+    app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
     app.config['TEMPLATES_AUTO_RELOAD'] = True
 
     app.run(port=5000, host="0.0.0.0")

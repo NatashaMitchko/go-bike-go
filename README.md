@@ -56,18 +56,18 @@ except exc.IntegrityError:
 
 #### Getting information out of the database
 
-When attempting to get coordinate points out of the database you get them back in the WKB (well-known binary) format. In order to get them back in WKT, in order to be sent to the Google Maps API for display, they need to be converted back. The GeoAlchemy2 function that does this is ST_AsText. From what I can tell this function can only be executed during the transaction i.e. you cannot get the bike station object and then ask to convert from WKB to WKT on the point attribute. Because of this the conversion needs to happen in the query itself. The helper function ```get_closest_stations(location)``` in the [server](/server.py)takes a location and returns a tuple of the station object and the WKT version of the coordinates.
+When attempting to get coordinate points out of the database you get them back in the WKB (well-known binary) format. In order to get them back in WKT, in order to be sent to the Google Maps API for display, they need to be converted back. The GeoAlchemy2 function that does this is ST_AsText. From what I can tell this function can only be executed during the transaction i.e. you cannot get the bike station object and then ask to convert from WKB to WKT on the point attribute. Because of this I've written two methods for the Station class that use the [shapely](https://github.com/Toblerity/Shapely) module to convert the WKB into the latitude and longitude coordinates.
 
 ```python
-from geoalchemy2 import func
+from shapely.wkb import loads
 
-def get_closest_stations(location):
-	"""Given a location (home, work, or the user location), return the top 5
-	closest stations to that point"""
+def lat(self):
+        """Return the latitude of the station"""
+        coordinates = loads(bytes(self.point.data))
+        return coordinates.y
 
-	query = db.session.query(Station, 
-		func.ST_AsText(Station.point)).order_by(func.ST_Distance(Station.point, 
-		location)).limit(5)
-
-	return query.all()
+def lng(self):
+    """Return the longitude of the station"""
+    coordinates = loads(bytes(self.point.data))
+    return coordinates.x
 ```

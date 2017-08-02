@@ -6,6 +6,7 @@ Class names are singular - table names are plural"""
 
 from flask_sqlalchemy import SQLAlchemy
 from geoalchemy2 import Geography, func
+from shapely.wkb import loads
 
 db = SQLAlchemy()
 
@@ -45,6 +46,16 @@ class Station(db.Model):
     point = db.Column(Geography(geometry_type='POINT', srid=4326), nullable=False)
     num_bikes_available = db.Column(db.Integer, nullable=False)
     num_docks_available = db.Column(db.Integer, nullable=False)
+
+    def lat(self):
+        """Return the latitude of the station"""
+        coordinates = loads(bytes(self.point.data))
+        return coordinates.y
+
+    def lng(self):
+        """Return the longitude of the station"""
+        coordinates = loads(bytes(self.point.data))
+        return coordinates.x
 
     def __repr__(self):
         return '<Station id:{id}, Bike:Dock {bike}:{dock}>'.format(id=self.id, 
@@ -95,3 +106,4 @@ if __name__ == '__main__':
 
     init_app()
     db.create_all()
+    print 'created all'

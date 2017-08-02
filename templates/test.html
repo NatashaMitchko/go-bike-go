@@ -6,40 +6,64 @@
 <h2>Home:</h2>
 <ol>
 {% for s in home %}
-	<li>{{ s[0].name }} Bikes: {{ s[0].num_bikes_available }} Docks: {{ s[0].num_docks_available }}</li>
+	<li>{{ s.name }} Bikes: {{ s.num_bikes_available }} Docks: {{ s.num_docks_available }} lat: {{ s.lat() }}</li>
 {% endfor %}
 </ol>
 <h2>Work:</h2>
 <ol>
 {% for s in work %}
-	<li>{{ s[0].name }} Bikes: {{ s[0].num_bikes_available }} Docks: {{ s[0].num_docks_available }}</li>
+	<li>{{ s.name }} Bikes: {{ s.num_bikes_available }} Docks: {{ s.num_docks_available }}</li>
 {% endfor %}
 </ol>
 
 <div id="map" style="height:500px"></div>
-    <script>
-      var map;
+  <script>
+  // Get the relevant station information
 
-      $.get('/home.JSON', function(result){
-      	console.log(result);
+    var map;
+
+    function initMap() {
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: {lat: 40.742258, lng: -74.001383},
+        zoom: 12,
+        scrollwheel: false,
       });
+    {% for s in home %}
+    position = new google.maps.LatLng(s[1])
+    {% endfor %}
+    // var home_stations, work_stations;
+    // $.get('/home.json', function(result){
+    // 	home_stations = result;
+    // 	console.log(result);
+    // 	console.log(home_stations['0']['name']);
+	   //  };
+	  
 
-      function initMap() {
-        map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: 40.742258, lng: -74.001383},
-          zoom: 12,
-          scrollwheel: false,
-        });
-      var point1 = {lat: 40.742262, lng: -74.0035717};
+    // $.get('/work.json', function(result){
+    // 	work_stations = result;
+    // 	console.log(result);
+    // 	console.log(work_stations['0']['name']);
+	   //  for(i=0; i <= 4; i++){
+	   //  	var position = new google.maps.LatLng(work_stations[i]['lat'], work_stations[i]['lng']);
+	   //  	console.log(position);
+		  //   var marker = new google.maps.Marker({
+		  //     position: position,
+		  //     map: map,
+		  //     title: work_stations[0]['name']
+		  //   });
+	   //  };
+    // });
 
-      var marker = new google.maps.Marker({
-        position: point1,
-        map: map
-      });
-      }
+    var position2 = new google.maps.LatLng(40.742258, -74.001383);
+    var marker = new google.maps.Marker({
+		      position: position2,
+		      map: map,
+		    });
 
-    </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD5BOHJtA9GKwGPHxQiqaBYK6LjmmY-SMI&callback=initMap"
-    async defer></script>
+    }
+
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD5BOHJtA9GKwGPHxQiqaBYK6LjmmY-SMI&callback=initMap"
+  async defer></script>
 
 {% endblock %}
