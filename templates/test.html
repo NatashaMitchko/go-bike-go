@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
 {% block title %}Test{% endblock %}
+{% block meta %}<script src="http://maps.google.com/maps/api/js?key=AIzaSyD5BOHJtA9GKwGPHxQiqaBYK6LjmmY-SMI" type="text/javascript"></script>{% endblock %}
 {% block body %}
 
 <h1>Welcome back {{ user.username }}</h1>
 <h2>Home:</h2>
 <ol>
 {% for s in home %}
-	<li>{{ s.name }} Bikes: {{ s.num_bikes_available }} Docks: {{ s.num_docks_available }} lat: {{ s.lat() }}</li>
+	<li>{{ s.name }} Bikes: {{ s.num_bikes_available }} Docks: {{ s.num_docks_available }} lat: {{ s.lat() }} lon: {{ s.lng() }}</li>
 {% endfor %}
 </ol>
 <h2>Work:</h2>
@@ -18,52 +19,63 @@
 
 <div id="map" style="height:500px"></div>
   <script>
-  // Get the relevant station information
+    
+    var home_markers = [
+	    {% for s in home %}
+	    ['{{ s.name }}', {{ s.lat() }}, {{ s.lng() }}],
+	    {% endfor %}
+    ];
 
-    var map;
+    var work_markers = [
+	    {% for s in work %}
+	    ['{{ s.name }}', {{ s.lat() }}, {{ s.lng() }}],
+	    {% endfor %}
+    ];
 
-    function initMap() {
-      map = new google.maps.Map(document.getElementById('map'), {
-        center: {lat: 40.742258, lng: -74.001383},
-        zoom: 12,
-        scrollwheel: false,
+    var bounds = new google.maps.LatLngBounds();
+
+    var map = new google.maps.Map(document.getElementById('map'), {
+      zoom: 12,
+      center: {lat: 40.742258, lng: -74.001383},
+    });
+
+    var infowindow = new google.maps.InfoWindow();
+
+    var marker, i;
+
+    for (i = 0; i < 5; i++) { 
+    	var position = new google.maps.LatLng(home_markers[i][1], home_markers[i][2]);
+      bounds.extend(position);
+      marker = new google.maps.Marker({
+        position: position,
+        map: map
       });
-    {% for s in home %}
-    position = new google.maps.LatLng(s[1])
-    {% endfor %}
-    // var home_stations, work_stations;
-    // $.get('/home.json', function(result){
-    // 	home_stations = result;
-    // 	console.log(result);
-    // 	console.log(home_stations['0']['name']);
-	   //  };
-	  
 
-    // $.get('/work.json', function(result){
-    // 	work_stations = result;
-    // 	console.log(result);
-    // 	console.log(work_stations['0']['name']);
-	   //  for(i=0; i <= 4; i++){
-	   //  	var position = new google.maps.LatLng(work_stations[i]['lat'], work_stations[i]['lng']);
-	   //  	console.log(position);
-		  //   var marker = new google.maps.Marker({
-		  //     position: position,
-		  //     map: map,
-		  //     title: work_stations[0]['name']
-		  //   });
-	   //  };
-    // });
+      google.maps.event.addListener(marker, 'click', (function(marker, i) {
+        return function() {
+          infowindow.setContent(home_markers[i][0]);
+          infowindow.open(map, marker);
+        }
+      })(marker, i));
+    };
 
-    var position2 = new google.maps.LatLng(40.742258, -74.001383);
-    var marker = new google.maps.Marker({
-		      position: position2,
-		      map: map,
-		    });
+    for (i = 0; i < 5; i++) { 
+    	var position = new google.maps.LatLng(work_markers[i][1], work_markers[i][2]);
+      bounds.extend(position);
+      marker = new google.maps.Marker({
+        position: position,
+        map: map
+      });
 
-    }
+      google.maps.event.addListener(marker, 'click', (function(marker, i) {
+        return function() {
+          infowindow.setContent(work_markers[i][0]);
+          infowindow.open(map, marker);
+        }
+      })(marker, i));
+    };
+
+    map.fitBounds(bounds);
 
   </script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD5BOHJtA9GKwGPHxQiqaBYK6LjmmY-SMI&callback=initMap"
-  async defer></script>
-
 {% endblock %}
