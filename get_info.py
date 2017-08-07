@@ -25,7 +25,6 @@ JSON Information about the stations is obtained from these links
  ]
 
       """
-
 import requests, json
 from model import db, Station
 from sqlalchemy import exc

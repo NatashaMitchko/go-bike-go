@@ -22,13 +22,13 @@
     
     var home_markers = [
 	    {% for s in home %}
-	    ['{{ s.name }}', {{ s.lat() }}, {{ s.lng() }}],
+	    ['{{ s.name }}', {{ s.lat() }}, {{ s.lng() }}, {{ s.num_bikes_available }}, {{ s.num_docks_available }}],
 	    {% endfor %}
     ];
 
     var work_markers = [
 	    {% for s in work %}
-	    ['{{ s.name }}', {{ s.lat() }}, {{ s.lng() }}],
+	    ['{{ s.name }}', {{ s.lat() }}, {{ s.lng() }}, {{ s.num_bikes_available }}, {{ s.num_docks_available }}],
 	    {% endfor %}
     ];
 
@@ -37,6 +37,7 @@
     var map = new google.maps.Map(document.getElementById('map'), {
       zoom: 12,
       center: {lat: 40.742258, lng: -74.001383},
+      scrollwheel: false
     });
 
     var infowindow = new google.maps.InfoWindow();

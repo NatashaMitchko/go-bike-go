@@ -9,6 +9,7 @@ import re
 from geoalchemy2 import func
 from sqlalchemy import exc
 
+
 from model import connect_to_db, db, User, Station
 from get_info import seed_station_information, update_station_status, system_alerts
 
@@ -131,8 +132,6 @@ def register():
 @app.route('/seed')
 def seed_and_update():
 	"""seed and update the database - temporart solution"""
-	seed_station_information()
-	print 'Seeded'
 	update_station_status()
 	print 'Stations updated'
 
@@ -143,50 +142,10 @@ def seed_and_update():
 # JSON Routes
 #---------------------------------------------------------------------#
 
-@app.route('/home.json')
-def send_home_availability():
-	"""Sends JSON about home bike stations and availability"""
-	user = get_user_by_id(session['user_id'])
-	home = get_closest_stations(user.home_point)
-
-	stations = {}
-
-	for i in range(len(home)):
-		coords = re.match(r'\(-?([^\)]+)\)', '(-74.00016545 40.71117416)').group()
-		lon, lat = coords[1:-1].split()
-		stations[str(i)] = {'name': home[i][0].name,
-										'bikes': home[i][0].num_bikes_available,
-										'docks': home[i][0].num_docks_available,
-										'lat': lat,
-										'lon': lon
-										}
-	return jsonify(stations)
-
-
-
-@app.route('/work.json')
-def send_work_availability():
-	"""Sends JSON about work bike stations and availability"""
-	user = get_user_by_id(session['user_id'])
-	work = get_closest_stations(user.work_point)
-
-	stations = {}
-
-	for i in range(len(work)):
-		coords = re.match(r'\(-?([^\)]+)\)', '(-74.00016545 40.71117416)').group()
-		lon, lat = coords[1:-1].split()
-		stations[str(i)] = {'name': work[i][0].name,
-										'bikes': work[i][0].num_bikes_available,
-										'docks': work[i][0].num_docks_available,
-										'lat': lat,
-										'lon': lon
-										}
-	return jsonify(stations)
-
 @app.route('/user-location.JSON')
 def send_user_location_availability(location):
 	"""Gets location from the user and finds closest stations and availability"""
-
+	pass
 
 
 if __name__ == "__main__":
