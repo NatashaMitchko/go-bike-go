@@ -47,6 +47,7 @@ from sqlalchemy import exc
 point = 'POINT(' + '-73.9588267' + ' ' + '40.7047029' + ')'
 
 new_example = Example(point = point)
+
 try:
 	db.session.add(new_example)
 	db.session.commit()
@@ -62,12 +63,15 @@ When attempting to get coordinate points out of the database you get them back i
 from shapely.wkb import loads
 
 def lat(self):
-        """Return the latitude of the station"""
-        coordinates = loads(bytes(self.point.data))
-        return coordinates.y
+    """Return the latitude of the station"""
+    coordinates = loads(bytes(self.point.data))
+    return coordinates.y
 
 def lng(self):
     """Return the longitude of the station"""
     coordinates = loads(bytes(self.point.data))
     return coordinates.x
 ```
+## Updating the Station Bike and Dock Counts
+
+The bike and dock counts are updated by the process running out of [update.py](/update.py). This script creates a Flask-app instance in order to use Flask-SQLAlchemy, connects to the database and then runs ```update_station_status()``` every 60 seconds. The scheduling is controlled by a simple timer in a while loop. The update itself takes approximately 1.5 seconds to complete.

@@ -61,7 +61,10 @@ def seed_station_information():
 def update_station_status():
 	"""Updates the database with the status of all of the stations.
 			
-	https://gbfs.citibikenyc.com/gbfs/en/station_status.json"""
+	https://gbfs.citibikenyc.com/gbfs/en/station_status.json
+	
+	This function takes approximately 1.5 seconds to run
+	"""
 
 	response = requests.get('https://gbfs.citibikenyc.com/gbfs/en/station_status.json')
 	response = json.loads(response.text)
