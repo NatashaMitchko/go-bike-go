@@ -41,6 +41,27 @@ def create_new_user(user_info):
 	except exc.IntegrityError:
 		db.session.rollback()
 
+def update_existing_user(user_info):
+	"""This function takes the request.form object passed to the update route and
+	parses it out to update the user settings"""
+
+	user = get_user_by_id(session['user_id'])
+
+	if user_info['homeLngLat']:
+		user.home_address = user_info['home']
+		user.home_point = 'POINT(' + user_info['homeLngLat'] + ')'
+
+	if user_info['workLngLat']:
+		user.work_address = user_info['work']
+		user.work_point = 'POINT(' + user_info['workLngLat'] + ')'
+
+	try:
+		db.session.add(new_user)
+		db.session.commit()
+	except exc.IntegrityError:
+		db.session.rollback()
+
+
 def get_user_by_id(id):
 	"""Takes user id and returns user object"""
 	return User.query.filter(User.id==id).first()
@@ -128,6 +149,17 @@ def register():
     		create_new_user(request.form)
     		print "new user created"
     		return redirect('/')
+
+@app.route('/update', methods=['GET', 'POST'])
+def update():
+	"""Render the update form and handle changes to user info"""
+	if request.method == 'GET':
+		return render_template('/update')
+	else:
+		update_existing_user(request.form)
+# update existing user doesn't work yet - need to redirect back to main map
+# with a message saying preferences updated
+
 
 @app.route('/seed')
 def seed_and_update():

@@ -72,6 +72,6 @@ def lng(self):
     coordinates = loads(bytes(self.point.data))
     return coordinates.x
 ```
-## Updating the Station Bike and Dock Counts
+## Updating the Bike and Dock Counts
 
 The bike and dock counts are updated by the process running out of [update.py](/update.py). This script creates a Flask-app instance in order to use Flask-SQLAlchemy, connects to the database and then runs ```update_station_status()``` every 60 seconds. The scheduling is controlled by a simple timer in a while loop. The update itself takes approximately 1.5 seconds to complete.
