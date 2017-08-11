@@ -17,7 +17,7 @@
 	<li>{{ s.name }} Bikes: {{ s.num_bikes_available }} Docks: {{ s.num_docks_available }}</li>
 {% endfor %}
 </ol>
-
+<div id="infowindow"></div>
 <div id="map" style="height:500px"></div>
   <script>
     
@@ -27,13 +27,26 @@
 	    {% endfor %}
     ];
 
+    var home_content = [
+      {% for s in home %}
+      ['<div id="bodyContent">' + '<p>{{s.name}} bikes: {{ s.num_bikes_available }} docks: {{ s.num_docks_available }}</p>' + '</div>'],
+      {% endfor %}
+    ];
+
     var work_markers = [
 	    {% for s in work %}
 	    ['{{ s.name }}', {{ s.lat() }}, {{ s.lng() }}, {{ s.num_bikes_available }}, {{ s.num_docks_available }}],
 	    {% endfor %}
     ];
 
+    var work_content = [
+      {% for s in work %}
+      ['<div id="bodyContent">' + '<p>{{s.name}} docks: {{ s.num_docks_available }} bikes: {{ s.num_bikes_available }} </p>' + '</div>'],
+      {% endfor %}
+    ];
+
     var bounds = new google.maps.LatLngBounds();
+    var infoWindow = new google.maps.InfoWindow();
 
     var map = new google.maps.Map(document.getElementById('map'), {
       zoom: 12,
@@ -42,7 +55,7 @@
     });
 
     var infowindow = new google.maps.InfoWindow();
-
+    var gmarkers = [];
     var marker, i;
 
     for (i = 0; i < 5; i++) { 
@@ -59,6 +72,16 @@
           infowindow.open(map, marker);
         }
       })(marker, i));
+
+      google.maps.event.addListener(marker, 'click', (function (marker, i) {
+              return function () {
+                  //infoWindow.setContent(content[i][0]);
+                  //infoWindow.open(map, marker);    
+              jQuery( '#infowindow' ).empty();
+              jQuery( '#infowindow' ).append( home_content[i][0] );          
+              }
+          })(marker, i));
+          gmarkers.push(marker);
     };
 
     for (i = 0; i < 5; i++) { 
@@ -75,6 +98,16 @@
           infowindow.open(map, marker);
         }
       })(marker, i));
+
+      google.maps.event.addListener(marker, 'click', (function (marker, i) {
+              return function () {
+                  //infoWindow.setContent(content[i][0]);
+                  //infoWindow.open(map, marker);    
+              jQuery( '#infowindow' ).empty();
+              jQuery( '#infowindow' ).append( work_content[i][0] );          
+              }
+          })(marker, i));
+          gmarkers.push(marker);
     };
 
     map.fitBounds(bounds);
