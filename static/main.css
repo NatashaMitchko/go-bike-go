@@ -50,12 +50,13 @@ input {
 /* Google Maps Styling */
 
 #map {
-	height: 100%;
+	 height: 78%;
 }
 
 /* Infowindow styling */
 
 #infowindow {
+	height: -webkit-fill-available;
 	padding: 4em;
 	background:#242527;
 }
