@@ -160,6 +160,10 @@ def update():
 # update existing user doesn't work yet - need to redirect back to main map
 # with a message saying preferences updated
 
+@app.route('/test')
+def test():
+	return render_template('css_tests.html')
+
 
 @app.route('/seed')
 def seed_and_update():

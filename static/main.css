@@ -52,3 +52,26 @@ input {
 #map {
 	height: 100%;
 }
+
+/* Infowindow styling */
+
+#infowindow {
+	padding: 4em;
+	background:#242527;
+}
+
+.count {
+	font-size: 10em;
+	font-family: 'Open Sans', sans-serif;
+	font-weight: bolder;
+	color: transparent;
+	background:linear-gradient(to right,#fffc00, #e737ea);
+	-webkit-background-clip: text;
+}
+
+.count-label {
+	font-size: 3em;
+	color:transparent;
+	background:linear-gradient(to right,#fffc00, #e737ea);
+	-webkit-background-clip: text;
+}

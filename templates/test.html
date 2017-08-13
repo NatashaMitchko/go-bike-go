@@ -5,20 +5,9 @@
 
 <h1>Welcome back {{ user.username }}</h1>
 <a href="/update">Update Favorite Places</a>
-<h2>Home:</h2>
-<ol>
-{% for s in home %}
-	<li>{{ s.name }} Bikes: {{ s.num_bikes_available }} Docks: {{ s.num_docks_available }}</li>
-{% endfor %}
-</ol>
-<h2>Work:</h2>
-<ol>
-{% for s in work %}
-	<li>{{ s.name }} Bikes: {{ s.num_bikes_available }} Docks: {{ s.num_docks_available }}</li>
-{% endfor %}
-</ol>
-<div id="infowindow"></div>
 <div id="map" style="height:500px"></div>
+<div id="infowindow"></div>
+
   <script>
     
     var home_markers = [
