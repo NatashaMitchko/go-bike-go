@@ -6,6 +6,9 @@
 <div id="over-map">
   <h1>Welcome back {{ user.username }}</h1>
   <a href="/update">Update Favorite Places</a>
+  {% for message in get_flashed_messages() %}
+    {{ message }}
+  {% endfor %}
 </div>
 
 <div id="map"></div>

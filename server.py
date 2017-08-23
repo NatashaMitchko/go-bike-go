@@ -56,11 +56,10 @@ def update_existing_user(user_info):
 		user.work_point = 'POINT(' + user_info['workLngLat'] + ')'
 
 	try:
-		db.session.add(new_user)
+		db.session.add(user)
 		db.session.commit()
 	except exc.IntegrityError:
 		db.session.rollback()
-
 
 def get_user_by_id(id):
 	"""Takes user id and returns user object"""
@@ -154,11 +153,11 @@ def register():
 def update():
 	"""Render the update form and handle changes to user info"""
 	if request.method == 'GET':
-		return render_template('/update')
+		return render_template('update.html')
 	else:
 		update_existing_user(request.form)
-# update existing user doesn't work yet - need to redirect back to main map
-# with a message saying preferences updated
+		return redirect('/')
+	# with a message saying preferences updated
 
 @app.route('/test')
 def test():
